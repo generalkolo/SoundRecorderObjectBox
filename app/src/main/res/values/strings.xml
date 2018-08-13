@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SoundRecorderBox</string>
+    <string name="tab_title_record">Record Fragment</string>
+    <string name="tab_title_saved_recordings">Saved Recordings</string>
+
+    <string name="record_prompt">Tap the button to start recording</string>
+    <string name="toast_recording_start">Recording Started</string>
+    <string name="record_in_progress">Recording</string>
+    <string name="toast_recording_finish">Recording saved to</string>
+    <string name="default_file_name">My Recording</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
