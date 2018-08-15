@@ -39,7 +39,7 @@ public class RecordFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_POSITION = "position";
     @BindView(R.id.Recordbtn)
-    FloatingActionButton btnRecord;
+    android.support.design.widget.FloatingActionButton btnRecord;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
     @BindView(R.id.recording_status_text)
@@ -80,9 +80,6 @@ public class RecordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View recordView = inflater.inflate(R.layout.fragment_record, container, false);
         unbinder = ButterKnife.bind(this, recordView);
-
-        btnRecord.setColorNormal(getResources().getColor(R.color.colorPrimary));
-        btnRecord.setColorPressed(getResources().getColor(R.color.colorPrimaryDark));
 
         return recordView;
     }

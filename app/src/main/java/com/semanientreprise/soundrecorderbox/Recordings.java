@@ -1,11 +1,14 @@
 package com.semanientreprise.soundrecorderbox;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 import io.objectbox.annotation.NameInDb;
 
 @Entity
-public class Recordings {
+public class Recordings implements Parcelable {
 
     @Id
     public long id;
@@ -18,6 +21,9 @@ public class Recordings {
     private long recording_length;
     @NameInDb("RecordingTime")
     private long recording_time_added;
+
+    public Recordings() {}
+
 
     public Recordings(long id, String recording_name, String recording_path,
                       long recording_length) {
@@ -67,4 +73,39 @@ public class Recordings {
     public void setRecording_time_added(int recording_time_added) {
         this.recording_time_added = recording_time_added;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.recording_name);
+        dest.writeString(this.recording_path);
+        dest.writeLong(this.recording_length);
+        dest.writeLong(this.recording_time_added);
+    }
+
+    protected Recordings(Parcel in) {
+        this.id = in.readLong();
+        this.recording_name = in.readString();
+        this.recording_path = in.readString();
+        this.recording_length = in.readLong();
+        this.recording_time_added = in.readLong();
+    }
+
+    public static final Parcelable.Creator<Recordings> CREATOR = new Parcelable.Creator<Recordings>() {
+        @Override
+        public Recordings createFromParcel(Parcel source) {
+            return new Recordings(source);
+        }
+
+        @Override
+        public Recordings[] newArray(int size) {
+            return new Recordings[size];
+        }
+    };
 }

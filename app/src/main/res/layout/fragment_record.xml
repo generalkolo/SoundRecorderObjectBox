@@ -8,10 +8,10 @@
     android:layout_height="match_parent"
     >
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/Recordbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         app:fab_colorNormal="@color/colorPrimary"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"

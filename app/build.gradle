@@ -30,6 +30,7 @@ dependencies {
 
     //User Dependencies
     implementation "com.android.support:appcompat-v7:$rootProject.ext.buildToolsVersion"
+    implementation "com.android.support:design:$rootProject.ext.buildToolsVersion"
     implementation "com.android.support:cardview-v7:$rootProject.ext.buildToolsVersion"
     implementation "com.android.support:recyclerview-v7:$rootProject.ext.buildToolsVersion"
     implementation "com.melnykov:floatingactionbutton:$rootProject.ext.floatingActionButton"
@@ -40,4 +41,7 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     implementation "io.objectbox:objectbox-android:$rootProject.ext.objectboxVersion"
+
+    implementation "android.arch.lifecycle:extensions:$rootProject.ext.archLifecycleExtensionsVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.ext.archLifecycleExtensionsVersion"
 }
