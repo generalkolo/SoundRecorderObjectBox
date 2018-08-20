@@ -86,7 +86,7 @@ public class RecordingService extends Service {
             count++;
 
             mFileName = getString(R.string.default_file_name)
-                    + "_" + (count) + ".mp4";
+                    + "_" + (recordingsBox.getAll().size()+count) + ".mp4";
             mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
             mFilePath += "/Soundbox/" + mFileName;
 

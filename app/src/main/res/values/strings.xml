@@ -11,4 +11,17 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_action_cancel">cancel</string>
+    <string name="dialog_title_options">Options</string>
+    <string name="dialog_file_rename">Rename Recording</string>
+    <string name="dialog_file_delete">Delete Recording</string>
+    <string name="dialog_action_ok">OK</string>
+    <string name="dialog_title_rename">Rename</string>
+    <string name="toast_file_exists">The file %1$s already exists. Please choose a different file name.</string>
+    <string name="toast_recording_not_exists">No recording with name %1$s found.</string>
+    <string name="dialog_title_delete">Delete Recording</string>
+    <string name="dialog_text_delete">Are you sure you would like to delete this file?</string>
+    <string name="dialog_action_yes">Yes</string>
+    <string name="dialog_action_no">No</string>
+    <string name="toast_file_delete">%1$s successfully deleted</string>
 </resources>
