@@ -14,14 +14,14 @@
         android:theme="@style/AppTheme"
         android:name=".MyApplicationClass"
         >
-        <activity android:name=".MainActivity">
+        <activity android:name=".presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".RecordingService" />
+        <service android:name=".utils.RecordingService" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.semanientreprise.soundrecorderbox
+package com.semanientreprise.soundrecorderbox.presentation.fragments
 
 import android.Manifest
 import android.content.Intent
@@ -23,7 +23,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
-import com.semanientreprise.soundrecorderbox.RecordingService
+import com.semanientreprise.soundrecorderbox.R
+import com.semanientreprise.soundrecorderbox.utils.RecordingService
 import java.io.File
 
 /**

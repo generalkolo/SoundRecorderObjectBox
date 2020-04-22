@@ -1,4 +1,4 @@
-package com.semanientreprise.soundrecorderbox
+package com.semanientreprise.soundrecorderbox.utils
 
 import android.app.Service
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.os.Environment
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import com.semanientreprise.soundrecorderbox.R
+import com.semanientreprise.soundrecorderbox.models.Recordings
 import io.objectbox.Box
 import java.io.File
 import java.io.IOException
@@ -17,17 +19,18 @@ import java.io.IOException
 class RecordingService : Service() {
     private var mFileName: String? = null
     private var mFilePath: String? = null
-    private var mRecorder: MediaRecorder? = null
+    private lateinit var mRecorder: MediaRecorder
     private var mStartingTimeMillis: Long = 0
     private var mElapsedMillis: Long = 0
     private var recordingsBox: Box<Recordings>? = null
-    override fun onBind(intent: Intent): IBinder {
+
+    override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
     override fun onCreate() {
         super.onCreate()
-        recordingsBox = (application as MyApplicationClass).boxStore.boxFor(Recordings::class.java)
+        recordingsBox = ObjectBox.boxStore.boxFor(Recordings::class.java)
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -42,42 +45,42 @@ class RecordingService : Service() {
         super.onDestroy()
     }
 
-    fun startRecording() {
+    private fun startRecording() {
         setFileNameAndPath()
-        mRecorder = MediaRecorder()
-        mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mRecorder!!.setOutputFile(mFilePath)
-        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mRecorder!!.setAudioChannels(1)
-        mRecorder!!.setAudioSamplingRate(44100)
-        mRecorder!!.setAudioEncodingBitRate(192000)
+        mRecorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFile(mFilePath)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setAudioChannels(1)
+            setAudioSamplingRate(44100)
+            setAudioEncodingBitRate(192000)
+        }
+
         try {
-            mRecorder!!.prepare()
-            mRecorder!!.start()
+            mRecorder.prepare()
+            mRecorder.start()
             mStartingTimeMillis = System.currentTimeMillis()
         } catch (e: IOException) {
             Log.e(LOG_TAG, "prepare() failed")
         }
     }
 
-    fun setFileNameAndPath() {
+    private fun setFileNameAndPath() {
         var count = 0
         var f: File
         do {
             count++
-            mFileName = (getString(R.string.default_file_name)
-                    + "_" + (recordingsBox!!.all.size + count) + ".mp4")
-            mFilePath = Environment.getExternalStorageDirectory().absolutePath
-            mFilePath += "/Soundbox/$mFileName"
-            f = File(mFilePath)
+            mFileName = "${getString(R.string.default_file_name)}_${recordingsBox!!.all.size + count}.mp4"
+            mFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/Soundbox/$mFileName"
+            f = File(mFilePath!!)
         } while (f.exists() && !f.isDirectory)
     }
 
-    fun stopRecording() {
-        mRecorder!!.stop()
+    private fun stopRecording() {
+        mRecorder.stop()
         mElapsedMillis = System.currentTimeMillis() - mStartingTimeMillis
-        mRecorder!!.release()
+        mRecorder.release()
         Toast.makeText(this, getString(R.string.toast_recording_finish) + " " + mFilePath, Toast.LENGTH_LONG).show()
         mRecorder = null
         try {

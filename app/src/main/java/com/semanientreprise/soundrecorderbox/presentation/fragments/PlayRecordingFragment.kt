@@ -1,4 +1,4 @@
-package com.semanientreprise.soundrecorderbox
+package com.semanientreprise.soundrecorderbox.presentation.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -18,6 +18,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
+import com.semanientreprise.soundrecorderbox.R
+import com.semanientreprise.soundrecorderbox.models.Recordings
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -60,7 +62,7 @@ class PlayRecordingFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recording = arguments.getParcelable(ARG_ITEM)
-        val itemDuration = recording.recording_length
+        val itemDuration = recording!!.recording_length
         minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration)
         seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes)
     }

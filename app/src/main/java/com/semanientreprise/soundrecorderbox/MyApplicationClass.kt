@@ -1,13 +1,11 @@
 package com.semanientreprise.soundrecorderbox
 
 import android.app.Application
-import io.objectbox.BoxStore
+import com.semanientreprise.soundrecorderbox.utils.ObjectBox
 
 class MyApplicationClass : Application() {
-    var boxStore: BoxStore? = null
     override fun onCreate() {
         super.onCreate()
-        boxStore = MyObjectBox.builder().androidContext(this@MyApplicationClass).build()
+        ObjectBox.init(this)
     }
-
 }
