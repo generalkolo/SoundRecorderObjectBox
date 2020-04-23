@@ -7,10 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import android.support.annotation.RequiresApi
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import androidx.annotation.RequiresApi
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,24 +34,27 @@ import java.io.File
  * Use the [RecordFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class RecordFragment : Fragment() {
-    @JvmField
+class RecordFragment : androidx.fragment.app.Fragment() {
+
     @BindView(R.id.Recordbtn)
-    var btnRecord: FloatingActionButton? = null
-    @JvmField
+    lateinit var btnRecord: FloatingActionButton
+
     @BindView(R.id.chronometer)
-    var chronometer: Chronometer? = null
-    @JvmField
+    lateinit var chronometer: Chronometer
+
     @BindView(R.id.recording_status_text)
-    var recordingStatusText: TextView? = null
+    lateinit var recordingStatusText: TextView
+
     var unbinder: Unbinder? = null
+
     private var position = 0
     private var mRecordPromptCount = 0
     private var mStartRecording = true
-    private val RECORD_AUDIO_REQUEST_CODE = 7
+    private val RECORD_AUDIO_REQUEST_CODE = 10010
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        position = arguments.getInt(ARG_POSITION)
+        position = arguments!!.getInt(ARG_POSITION)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,6 +63,7 @@ class RecordFragment : Fragment() {
         return recordView
     }
 
+    //TODO: Change with RxPermissions
     @OnClick(R.id.Recordbtn)
     fun onViewClicked() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -72,7 +76,7 @@ class RecordFragment : Fragment() {
     @get:RequiresApi(api = Build.VERSION_CODES.M)
     val permissionToRecordAudio: Unit
         get() {
-            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         RECORD_AUDIO_REQUEST_CODE)
             }
@@ -93,40 +97,45 @@ class RecordFragment : Fragment() {
     private fun onRecord(start: Boolean) {
         val intent = Intent(activity, RecordingService::class.java)
         if (start) { // start recording
-            btnRecord!!.setImageResource(R.drawable.ic_stop)
+            btnRecord.setImageResource(R.drawable.ic_stop)
             Toast.makeText(activity, R.string.toast_recording_start, Toast.LENGTH_SHORT).show()
-            val folder = File(Environment.getExternalStorageDirectory().toString() + "/Soundbox")
-            if (!folder.exists()) { //folder /SoundRecorder doesn't exist, create the folder
+            val folder = File("${Environment.getExternalStorageDirectory()}/Soundbox")
+            if (!folder.exists()) {
+                //folder /SoundRecorder doesn't exist, create the folder
                 folder.mkdir()
             }
             //start Chronometer
-            chronometer!!.base = SystemClock.elapsedRealtime()
-            chronometer!!.start()
-            chronometer!!.onChronometerTickListener = OnChronometerTickListener {
-                if (mRecordPromptCount == 0) {
-                    recordingStatusText!!.text = getString(R.string.record_in_progress) + "."
-                } else if (mRecordPromptCount == 1) {
-                    recordingStatusText!!.text = getString(R.string.record_in_progress) + ".."
-                } else if (mRecordPromptCount == 2) {
-                    recordingStatusText!!.text = getString(R.string.record_in_progress) + "..."
-                    mRecordPromptCount = -1
+            chronometer.base = SystemClock.elapsedRealtime()
+            chronometer.start()
+            chronometer.onChronometerTickListener = OnChronometerTickListener {
+                when (mRecordPromptCount) {
+                    0 -> {
+                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
+                    }
+                    1 -> {
+                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, "..")
+                    }
+                    2 -> {
+                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, "...")
+                        mRecordPromptCount = -1
+                    }
                 }
                 mRecordPromptCount++
             }
             //start RecordingService
-            activity.startService(intent)
+            activity!!.startService(intent)
             //keep screen on while recording
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            recordingStatusText!!.text = getString(R.string.record_in_progress) + "."
+            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
             mRecordPromptCount++
         } else { //stop recording
-            btnRecord!!.setImageResource(R.drawable.ic_mic)
-            chronometer!!.stop()
-            chronometer!!.base = SystemClock.elapsedRealtime()
-            recordingStatusText!!.text = getString(R.string.record_prompt)
-            activity.stopService(intent)
+            btnRecord.setImageResource(R.drawable.ic_mic)
+            chronometer.stop()
+            chronometer.base = SystemClock.elapsedRealtime()
+            recordingStatusText.text = getString(R.string.record_prompt)
+            activity!!.stopService(intent)
             //allow the screen to turn off again once recording is finished
-            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

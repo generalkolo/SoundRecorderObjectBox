@@ -5,13 +5,11 @@
 
     <string name="record_prompt">Tap the button to start recording</string>
     <string name="toast_recording_start">Recording Started</string>
-    <string name="record_in_progress">Recording</string>
     <string name="toast_recording_finish">Recording saved to</string>
     <string name="default_file_name">My Recording</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="dialog_action_cancel">cancel</string>
+    <string name="dialog_action_cancel">Cancel</string>
     <string name="dialog_title_options">Options</string>
     <string name="dialog_file_rename">Rename Recording</string>
     <string name="dialog_file_delete">Delete Recording</string>
@@ -24,4 +22,6 @@
     <string name="dialog_action_yes">Yes</string>
     <string name="dialog_action_no">No</string>
     <string name="toast_file_delete">%1$s successfully deleted</string>
+
+    <string name="recording_in_progress_holder">Recording %s</string>
 </resources>

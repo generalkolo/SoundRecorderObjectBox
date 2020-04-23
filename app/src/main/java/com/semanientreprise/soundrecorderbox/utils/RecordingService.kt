@@ -82,7 +82,6 @@ class RecordingService : Service() {
         mElapsedMillis = System.currentTimeMillis() - mStartingTimeMillis
         mRecorder.release()
         Toast.makeText(this, getString(R.string.toast_recording_finish) + " " + mFilePath, Toast.LENGTH_LONG).show()
-        mRecorder = null
         try {
             val recordings = Recordings(0, mFileName, mFilePath, mElapsedMillis)
             recordingsBox!!.put(recordings)

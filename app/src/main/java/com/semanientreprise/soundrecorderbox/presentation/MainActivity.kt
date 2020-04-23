@@ -1,9 +1,9 @@
 package com.semanientreprise.soundrecorderbox.presentation
 
 import android.os.Bundle
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.astuetz.PagerSlidingTabStrip
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     @BindView(R.id.tabs)
     lateinit var tabs: PagerSlidingTabStrip
     @BindView(R.id.pager)
-    lateinit var pager: ViewPager
+    lateinit var pager: androidx.viewpager.widget.ViewPager
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
 

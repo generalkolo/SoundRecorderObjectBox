@@ -1,22 +1,17 @@
 package com.semanientreprise.soundrecorderbox.adapters
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.semanientreprise.soundrecorderbox.presentation.fragments.RecordFragment
 import com.semanientreprise.soundrecorderbox.presentation.fragments.SavedRecordingsFragment
 
-class FragmentAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val fragment_titles = arrayOf("Record", "Saved Recordings")
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItem(position: Int): androidx.fragment.app.Fragment {
         return when (position) {
-            0 -> {
-                RecordFragment.newInstance(position)
-            }
-            else -> {
-                return  SavedRecordingsFragment.newInstance(position)
-            }
+            0 -> RecordFragment.newInstance(position)
+            else -> SavedRecordingsFragment.newInstance(position)
         }
     }
 

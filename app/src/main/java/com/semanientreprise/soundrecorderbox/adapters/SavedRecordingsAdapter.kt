@@ -2,9 +2,9 @@ package com.semanientreprise.soundrecorderbox.adapters
 
 import android.content.Context
 import android.os.Environment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +18,7 @@ import butterknife.ButterKnife
 import com.semanientreprise.soundrecorderbox.R
 import com.semanientreprise.soundrecorderbox.adapters.SavedRecordingsAdapter.RecordingsViewHolder
 import com.semanientreprise.soundrecorderbox.models.Recordings
+import com.semanientreprise.soundrecorderbox.models.Recordings_
 import com.semanientreprise.soundrecorderbox.presentation.fragments.PlayRecordingFragment
 import com.semanientreprise.soundrecorderbox.utils.ObjectBox
 import io.objectbox.Box
@@ -28,7 +29,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Edet Ebenezer on 08/15/2018.
  */
-class SavedRecordingsAdapter(private var mContext: Context, private var recordings: List<Recordings>) : RecyclerView.Adapter<RecordingsViewHolder>() {
+class SavedRecordingsAdapter(private var mContext: Context, private var recordings: List<Recordings>) : androidx.recyclerview.widget.RecyclerView.Adapter<RecordingsViewHolder>() {
     private var recording: Recordings? = null
     private val RECORDINGS: Box<Recordings> = ObjectBox.boxStore.boxFor(Recordings::class.java)
 
@@ -40,8 +41,8 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
     override fun onBindViewHolder(holder: RecordingsViewHolder, position: Int) {
         recording = getItem(position)
         val itemDuration = recording!!.recording_length
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration.toLong())
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration.toLong()) - TimeUnit.MINUTES.toSeconds(minutes)
 
         with(holder) {
             vName.text = recording!!.recording_name
@@ -56,7 +57,7 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
             cardView.setOnClickListener {
                 try {
                     val playbackFragment = PlayRecordingFragment().newInstance(getItem(holder.adapterPosition))
-                    val transaction = (mContext as FragmentActivity)
+                    val transaction = (mContext as androidx.fragment.app.FragmentActivity)
                             .supportFragmentManager
                             .beginTransaction()
                     playbackFragment.show(transaction, "dialog_playback")
@@ -183,7 +184,7 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
         return RecordingsViewHolder(itemView)
     }
 
-    class RecordingsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    class RecordingsViewHolder(v: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(v) {
         @BindView(R.id.file_name_text)
         lateinit var vName: TextView
 
