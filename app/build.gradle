@@ -51,7 +51,7 @@ dependencies {
 
     //butterknife for databinding
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     implementation "io.objectbox:objectbox-android:$rootProject.ext.objectboxVersion"
 

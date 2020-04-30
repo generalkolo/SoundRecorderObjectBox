@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2378530783312438541",
-      "lastPropertyId": "5:2882544797227514032",
+      "lastPropertyId": "9:2631471830405350919",
       "name": "Recordings",
       "properties": [
         {
@@ -13,20 +13,20 @@
           "name": "id"
         },
         {
-          "id": "2:2893162825777360853",
-          "name": "recording_name"
+          "id": "6:3066610814443112206",
+          "name": "RecordingName"
         },
         {
-          "id": "3:4619478060101300698",
-          "name": "recording_path"
+          "id": "7:4244214532628131998",
+          "name": "RecordingPath"
         },
         {
-          "id": "4:3799092424607485735",
-          "name": "recording_length"
+          "id": "8:8161103028964389160",
+          "name": "RecordingLength"
         },
         {
-          "id": "5:2882544797227514032",
-          "name": "recording_time_added"
+          "id": "9:2631471830405350919",
+          "name": "RecordingTime"
         }
       ],
       "relations": []
@@ -40,7 +40,12 @@
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    2893162825777360853,
+    4619478060101300698,
+    3799092424607485735,
+    2882544797227514032
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

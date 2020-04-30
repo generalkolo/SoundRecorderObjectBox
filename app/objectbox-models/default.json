@@ -10,23 +10,31 @@
       "properties": [
         {
           "id": "1:4876642588288779077",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "6:3066610814443112206",
-          "name": "RecordingName"
+          "name": "RecordingName",
+          "type": 9
         },
         {
           "id": "7:4244214532628131998",
-          "name": "RecordingPath"
+          "name": "RecordingPath",
+          "type": 9
         },
         {
           "id": "8:8161103028964389160",
-          "name": "RecordingLength"
+          "name": "RecordingLength",
+          "type": 6,
+          "flags": 4
         },
         {
           "id": "9:2631471830405350919",
-          "name": "RecordingTime"
+          "name": "RecordingTime",
+          "type": 6,
+          "flags": 4
         }
       ],
       "relations": []
@@ -36,8 +44,8 @@
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
-  "modelVersion": 4,
-  "modelVersionParserMinimum": 4,
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
