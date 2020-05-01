@@ -111,7 +111,8 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
         }.create().show()
     }
 
-    private fun rename(position: Int, name: String) { //rename a file
+    private fun rename(position: Int, name: String) {
+        //rename a file
         val mFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/Soundbox/$name"
 
         val f = File(mFilePath)

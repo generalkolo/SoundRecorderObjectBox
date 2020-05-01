@@ -2,8 +2,6 @@ package com.semanientreprise.soundrecorderbox.presentation.fragments
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
@@ -13,12 +11,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Chronometer.OnChronometerTickListener
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.semanientreprise.soundrecorderbox.R
 import com.semanientreprise.soundrecorderbox.databinding.FragmentRecordBinding
 import com.semanientreprise.soundrecorderbox.utils.RecordingService
+import com.tbruyelle.rxpermissions2.RxPermissions
 import java.io.File
 
 /**
@@ -36,6 +33,7 @@ class RecordFragment : Fragment() {
     private var mRecordPromptCount = 0
     private var mStartRecording = true
     private val RECORD_AUDIO_REQUEST_CODE = 10010
+    private lateinit var rxPermissions: RxPermissions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,38 +42,21 @@ class RecordFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
+        rxPermissions = RxPermissions(this)
         setOnClickListeners()
         return binding.root
     }
 
     private fun setOnClickListeners() {
         binding.Recordbtn.setOnClickListener {
-            //TODO: Change with RxPermissions
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                permissionToRecordAudio
-            }
-            onRecord(mStartRecording)
-            mStartRecording = !mStartRecording
-        }
-    }
-
-    @get:RequiresApi(api = Build.VERSION_CODES.M)
-    val permissionToRecordAudio: Unit
-        get() {
-            if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        RECORD_AUDIO_REQUEST_CODE)
-            }
-        }
-
-    // Callback with the request from calling requestPermissions(...)
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) { // Make sure it's our original READ_CONTACTS request
-        if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
-            if (grantResults.size == 3 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-            } else {
-                Toast.makeText(activity, "You must give permissions to use this app. App is exiting.", Toast.LENGTH_SHORT).show()
-            }
+            rxPermissions.request(Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe { granted ->
+                        if (granted) {
+                            onRecord(mStartRecording)
+                            mStartRecording = !mStartRecording
+                        }
+                    }
         }
     }
 
