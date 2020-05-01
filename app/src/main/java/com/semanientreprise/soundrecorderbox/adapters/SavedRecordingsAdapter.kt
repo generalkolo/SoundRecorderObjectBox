@@ -2,21 +2,17 @@ package com.semanientreprise.soundrecorderbox.adapters
 
 import android.content.Context
 import android.os.Environment
-import androidx.fragment.app.FragmentActivity
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.semanientreprise.soundrecorderbox.R
 import com.semanientreprise.soundrecorderbox.adapters.SavedRecordingsAdapter.RecordingsViewHolder
+import com.semanientreprise.soundrecorderbox.databinding.RecordingsListItemBinding
 import com.semanientreprise.soundrecorderbox.models.Recordings
 import com.semanientreprise.soundrecorderbox.models.Recordings_
 import com.semanientreprise.soundrecorderbox.presentation.fragments.PlayRecordingFragment
@@ -29,7 +25,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Edet Ebenezer on 08/15/2018.
  */
-class SavedRecordingsAdapter(private var mContext: Context, private var recordings: List<Recordings>) : androidx.recyclerview.widget.RecyclerView.Adapter<RecordingsViewHolder>() {
+class SavedRecordingsAdapter(private var mContext: Context, private var recordings: List<Recordings>) : RecyclerView.Adapter<RecordingsViewHolder>() {
     private var recording: Recordings? = null
     private val RECORDINGS: Box<Recordings> = ObjectBox.boxStore.boxFor(Recordings::class.java)
 
@@ -41,20 +37,20 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
     override fun onBindViewHolder(holder: RecordingsViewHolder, position: Int) {
         recording = getItem(position)
         val itemDuration = recording!!.recording_length
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration.toLong())
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration.toLong()) - TimeUnit.MINUTES.toSeconds(minutes)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes)
 
         with(holder) {
-            vName.text = recording!!.recording_name
-            vLength.text = String.format("%02d:%02d", minutes, seconds)
-            vDateAdded.text = DateUtils.formatDateTime(
+            binding.fileNameText.text = recording!!.recording_name
+            binding.fileLengthText.text = String.format("%02d:%02d", minutes, seconds)
+            binding.fileDateAddedText.text = DateUtils.formatDateTime(
                     mContext,
                     recording!!.recording_time_added,
                     DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NUMERIC_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_YEAR
             )
 
             // define an on click listener to open PlaybackFragment
-            cardView.setOnClickListener {
+            binding.cardView.setOnClickListener {
                 try {
                     val playbackFragment = PlayRecordingFragment().newInstance(getItem(holder.adapterPosition))
                     val transaction = (mContext as androidx.fragment.app.FragmentActivity)
@@ -66,7 +62,7 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
                 }
             }
 
-            cardView.setOnLongClickListener {
+            binding.cardView.setOnLongClickListener {
                 val dialogOptions = ArrayList<String>()
                 dialogOptions.addAll(listOf(
                         mContext.getString(R.string.dialog_file_rename),
@@ -157,6 +153,7 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
             ) { dialog, _ -> dialog.dismiss() }
         }.create().show()
     }
+
     //remove item from database, RecyclerView and storage
     private fun remove(position: Int) {
         //delete file from storage
@@ -179,28 +176,11 @@ class SavedRecordingsAdapter(private var mContext: Context, private var recordin
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordingsViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recordings_list_item, parent, false)
-        mContext = parent.context
-        return RecordingsViewHolder(itemView)
+        val binding = RecordingsListItemBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        return RecordingsViewHolder(binding)
     }
 
-    class RecordingsViewHolder(v: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(v) {
-        @BindView(R.id.file_name_text)
-        lateinit var vName: TextView
-
-        @BindView(R.id.file_length_text)
-        lateinit var vLength: TextView
-
-        @BindView(R.id.file_date_added_text)
-        lateinit var vDateAdded: TextView
-
-        @BindView(R.id.card_view)
-        lateinit var cardView: View
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
-    }
+    class RecordingsViewHolder(val binding: RecordingsListItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount(): Int = recordings.size
 

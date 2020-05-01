@@ -7,23 +7,17 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import androidx.annotation.RequiresApi
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Chronometer
 import android.widget.Chronometer.OnChronometerTickListener
-import android.widget.TextView
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import butterknife.Unbinder
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.semanientreprise.soundrecorderbox.R
+import com.semanientreprise.soundrecorderbox.databinding.FragmentRecordBinding
 import com.semanientreprise.soundrecorderbox.utils.RecordingService
 import java.io.File
 
@@ -34,18 +28,9 @@ import java.io.File
  * Use the [RecordFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class RecordFragment : androidx.fragment.app.Fragment() {
-
-    @BindView(R.id.Recordbtn)
-    lateinit var btnRecord: FloatingActionButton
-
-    @BindView(R.id.chronometer)
-    lateinit var chronometer: Chronometer
-
-    @BindView(R.id.recording_status_text)
-    lateinit var recordingStatusText: TextView
-
-    var unbinder: Unbinder? = null
+class RecordFragment : Fragment() {
+    private var _binding: FragmentRecordBinding? = null
+    private val binding get() = _binding!!
 
     private var position = 0
     private var mRecordPromptCount = 0
@@ -58,19 +43,20 @@ class RecordFragment : androidx.fragment.app.Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val recordView = inflater.inflate(R.layout.fragment_record, container, false)
-        unbinder = ButterKnife.bind(this, recordView)
-        return recordView
+        _binding = FragmentRecordBinding.inflate(inflater, container, false)
+        setOnClickListeners()
+        return binding.root
     }
 
-    //TODO: Change with RxPermissions
-    @OnClick(R.id.Recordbtn)
-    fun onViewClicked() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            permissionToRecordAudio
+    private fun setOnClickListeners() {
+        binding.Recordbtn.setOnClickListener {
+            //TODO: Change with RxPermissions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                permissionToRecordAudio
+            }
+            onRecord(mStartRecording)
+            mStartRecording = !mStartRecording
         }
-        onRecord(mStartRecording)
-        mStartRecording = !mStartRecording
     }
 
     @get:RequiresApi(api = Build.VERSION_CODES.M)
@@ -96,8 +82,9 @@ class RecordFragment : androidx.fragment.app.Fragment() {
     // Recording Start/Stop
     private fun onRecord(start: Boolean) {
         val intent = Intent(activity, RecordingService::class.java)
-        if (start) { // start recording
-            btnRecord.setImageResource(R.drawable.ic_stop)
+        if (start) {
+            // start recording
+            binding.Recordbtn.setImageResource(R.drawable.ic_stop)
             Toast.makeText(activity, R.string.toast_recording_start, Toast.LENGTH_SHORT).show()
             val folder = File("${Environment.getExternalStorageDirectory()}/Soundbox")
             if (!folder.exists()) {
@@ -105,43 +92,52 @@ class RecordFragment : androidx.fragment.app.Fragment() {
                 folder.mkdir()
             }
             //start Chronometer
-            chronometer.base = SystemClock.elapsedRealtime()
-            chronometer.start()
-            chronometer.onChronometerTickListener = OnChronometerTickListener {
-                when (mRecordPromptCount) {
-                    0 -> {
-                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
+            with(binding) {
+                chronometer.base = SystemClock.elapsedRealtime()
+                chronometer.start()
+                chronometer.onChronometerTickListener = OnChronometerTickListener {
+                    when (mRecordPromptCount) {
+                        0 -> {
+                            recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
+                        }
+                        1 -> {
+                            recordingStatusText.text = getString(R.string.recording_in_progress_holder, "..")
+                        }
+                        2 -> {
+                            recordingStatusText.text = getString(R.string.recording_in_progress_holder, "...")
+                            mRecordPromptCount = -1
+                        }
                     }
-                    1 -> {
-                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, "..")
-                    }
-                    2 -> {
-                        recordingStatusText.text = getString(R.string.recording_in_progress_holder, "...")
-                        mRecordPromptCount = -1
-                    }
+                    mRecordPromptCount++
                 }
-                mRecordPromptCount++
             }
-            //start RecordingService
-            activity!!.startService(intent)
-            //keep screen on while recording
-            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
+            activity?.let {
+                //start RecordingService
+                it.startService(intent)
+                //keep screen on while recording
+                it.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+            binding.recordingStatusText.text = getString(R.string.recording_in_progress_holder, ".")
             mRecordPromptCount++
-        } else { //stop recording
-            btnRecord.setImageResource(R.drawable.ic_mic)
-            chronometer.stop()
-            chronometer.base = SystemClock.elapsedRealtime()
-            recordingStatusText.text = getString(R.string.record_prompt)
-            activity!!.stopService(intent)
-            //allow the screen to turn off again once recording is finished
-            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            //stop recording
+            with(binding) {
+                Recordbtn.setImageResource(R.drawable.ic_mic)
+                chronometer.stop()
+                chronometer.base = SystemClock.elapsedRealtime()
+                recordingStatusText.text = getString(R.string.record_prompt)
+            }
+            activity?.let {
+                it.stopService(intent)
+                //allow the screen to turn off again once recording is finished
+                it.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        unbinder!!.unbind()
+        _binding = null
     }
 
     companion object {

@@ -39,9 +39,7 @@ class RecordingService : Service() {
     }
 
     override fun onDestroy() {
-        if (mRecorder != null) {
-            stopRecording()
-        }
+        stopRecording()
         super.onDestroy()
     }
 
@@ -58,8 +56,10 @@ class RecordingService : Service() {
         }
 
         try {
-            mRecorder.prepare()
-            mRecorder.start()
+            with(mRecorder) {
+                prepare()
+                start()
+            }
             mStartingTimeMillis = System.currentTimeMillis()
         } catch (e: IOException) {
             Log.e(LOG_TAG, "prepare() failed")
@@ -83,8 +83,9 @@ class RecordingService : Service() {
         mRecorder.release()
         Toast.makeText(this, getString(R.string.toast_recording_finish) + " " + mFilePath, Toast.LENGTH_LONG).show()
         try {
-            val recordings = Recordings(0, mFileName, mFilePath, mElapsedMillis)
-            recordingsBox!!.put(recordings)
+            Recordings(0, mFileName, mFilePath, mElapsedMillis).let {
+                recordingsBox?.put(it)
+            }
             Toast.makeText(this, "New Recording Added", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Log.e(LOG_TAG, "exception", e)
